@@ -22,5 +22,18 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh '''
+                    minikube image load british-gas-utility:ci
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+                    kubectl apply -f k8s/configmap.yaml
+                    kubectl apply -f k8s/secret.yaml
+                    kubectl rollout status deployment/british-gas-utility
+                '''
+            }
+        }
     }
 }
